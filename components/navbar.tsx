@@ -1,8 +1,11 @@
 import Link from "next/link";
 import React from "react";
 import { buttonVariants } from "./ui/button";
+import { auth } from "@/lib/auth";
 
-const Navbar = () => {
+const Navbar = async () => {
+  const session = await auth();
+
   return (
     <div className="border-b py-3">
       <div className="container flex items-center justify-between">
@@ -17,15 +20,21 @@ const Navbar = () => {
           </div>
         </div>
         <div className="flex itmes-center gap-4">
-          <Link href={"/login"} className={buttonVariants()}>
-            Login
-          </Link>
-          <Link
-            href={"/login"}
-            className={buttonVariants({ variant: "secondary" })}
-          >
-            Sign UP
-          </Link>
+          {!session?.user ? (
+            <>
+              <Link href={"/login"} className={buttonVariants()}>
+                Login
+              </Link>
+              <Link
+                href={"/signup"}
+                className={buttonVariants({ variant: "secondary" })}
+              >
+                Sign UP
+              </Link>
+            </>
+          ) : (
+            <p>Hi, {session.user.name}</p>
+          )}
         </div>
       </div>
     </div>
