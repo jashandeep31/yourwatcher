@@ -1,4 +1,4 @@
-import { Calendar, Home, Inbox, Search, Settings } from "lucide-react";
+import { Calendar, Home, Inbox, LogOut, Search } from "lucide-react";
 
 import {
   Sidebar,
@@ -10,6 +10,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import Link from "next/link";
 
 // Menu items.
 const items = [
@@ -29,21 +30,16 @@ const items = [
     icon: Calendar,
   },
   {
-    title: "Search",
-    url: "#",
+    title: "VPS Resource Monitor",
+    url: "/dashboard/vps-resource-monitor",
     icon: Search,
-  },
-  {
-    title: "Settings",
-    url: "#",
-    icon: Settings,
   },
 ];
 
 export function AppSidebar() {
   return (
     <Sidebar>
-      <SidebarContent>
+      <SidebarContent className="min-h-screen flex flex-col justify-between">
         <SidebarGroup>
           <SidebarGroupLabel>Application</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -51,13 +47,29 @@ export function AppSidebar() {
               {items.map((item) => (
                 <SidebarMenuItem key={item.title}>
                   <SidebarMenuButton asChild>
-                    <a href={item.url}>
+                    <Link href={item.url}>
                       <item.icon />
                       <span>{item.title}</span>
-                    </a>
+                    </Link>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup className="mt-12">
+          <SidebarGroupLabel>Actions</SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuButton asChild>
+                <Link
+                  href={"/logout"}
+                  className="text-red-500 hover:text-red-500 duration-300 flex items-center gap-2"
+                >
+                  <LogOut size={16} />
+                  Logout
+                </Link>
+              </SidebarMenuButton>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

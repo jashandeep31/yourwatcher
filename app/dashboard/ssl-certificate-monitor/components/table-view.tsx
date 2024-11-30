@@ -26,7 +26,7 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
   return (
     <div>
       <p className="mb-4 text-orange-500">
-        Tracking start after 12:00 of next day after adding new item.
+        Tracking start after 00:00 of next day after adding new item.
       </p>
       <Table>
         <TableCaption>A list of your recent invoices.</TableCaption>
@@ -34,9 +34,9 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
           <TableRow>
             <TableHead className="w-[100px]">S.No</TableHead>
             <TableHead>Website</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Expires in</TableHead>
-            <TableHead>Created On</TableHead>
+            <TableHead className="min-w-[100px]">Status</TableHead>
+            <TableHead className="min-w-[100px]">Expires in</TableHead>
+            <TableHead className="min-w-[100px]">Created On</TableHead>
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>

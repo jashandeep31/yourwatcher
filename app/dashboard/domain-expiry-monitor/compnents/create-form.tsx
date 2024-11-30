@@ -16,10 +16,9 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { createSSLMonitoringTask } from "../_actions";
 
 const formSchema = z.object({
-  url: z.string().min(2).max(100).url(),
+  url: z.string().min(2).max(100),
 });
 const CreateForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -28,12 +27,14 @@ const CreateForm = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const toastId = toast.loading("Creating monitoring task");
-    const res = await createSSLMonitoringTask(values.url);
+    const res = {
+      status: "ok",
+    };
     if (res.status === "ok") {
-      toast.success("SSL Monitoring task created", { id: toastId });
+      toast.success("Domain Monitoring task created", { id: toastId });
       form.reset();
     } else {
-      toast.error("Failed to create SSL monitoring task", { id: toastId });
+      toast.error("Failed to create domain monitoring task", { id: toastId });
     }
   }
 
@@ -46,13 +47,13 @@ const CreateForm = () => {
             name="url"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Add the url of service</FormLabel>
+                <FormLabel>Add the Domain of service</FormLabel>
                 <FormControl>
-                  <Input placeholder="url to service" {...field} />
+                  <Input placeholder="jashan.dev" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Make sure to add the proper domain to the service to track
-                  SSL. Make sure it starts with https:// or http://
+                  Make sure to add proper domain to start checking domain
+                  expiry.
                 </FormDescription>
                 <FormMessage />
               </FormItem>

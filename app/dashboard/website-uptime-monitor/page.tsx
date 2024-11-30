@@ -19,7 +19,7 @@ const page = async () => {
     },
   });
   return (
-    <div className="container md:m-4">
+    <div className="m-4">
       <div>
         <h1 className="md:text-2xl font-bold">Track your services Uptime</h1>
         <p className="text-sm text-muted-foreground">

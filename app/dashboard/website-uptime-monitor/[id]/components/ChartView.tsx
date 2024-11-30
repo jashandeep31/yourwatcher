@@ -40,7 +40,7 @@ export default function UptimeChart({
   });
 
   return (
-    <Card className="w-full">
+    <Card className="overflow-auto">
       <CardHeader>
         <CardTitle>Website Uptime Chart</CardTitle>
       </CardHeader>

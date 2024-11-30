@@ -23,6 +23,7 @@ import {
   enableWebsiteMonitoringTask,
 } from "../_actions";
 import Link from "next/link";
+import { toast } from "sonner";
 
 const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
   return (
@@ -32,10 +33,12 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">S.No</TableHead>
-            <TableHead>Website</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Created On</TableHead>
-            <TableHead className="text-right">Action</TableHead>
+            <TableHead className="md:min-w-auto min-w-[300px]">
+              Website
+            </TableHead>
+            <TableHead className="w-[100px]">Status</TableHead>
+            <TableHead className="w-[100px]">Created On</TableHead>
+            <TableHead className="text-right w-[100px]">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -43,8 +46,14 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
             <TableRow key={task.id}>
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>
-                <Link href={`/dashboard/website-uptime-monitor/${task.id}`}>
-                  {task.url}
+                <Link
+                  className="text-blue-500 underline"
+                  href={`/dashboard/website-uptime-monitor/${task.id}`}
+                >
+                  {task.url}{" "}
+                  <span className="font-bold text-sm text-foreground ">
+                    (In Depth View)
+                  </span>
                 </Link>
               </TableCell>
               <TableCell>{task.status}</TableCell>
@@ -61,9 +70,17 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
                       <DropdownMenuItem
                         className=""
                         onClick={async () => {
-                          await enableWebsiteMonitoringTask({
+                          const toastId = toast.loading("Enabling task");
+                          const res = await enableWebsiteMonitoringTask({
                             id: task.id,
                           });
+                          if (res.status === "ok") {
+                            toast.success("Task enabled", { id: toastId });
+                          } else {
+                            toast.error("Failed to enable task", {
+                              id: toastId,
+                            });
+                          }
                         }}
                       >
                         Enable
@@ -72,9 +89,17 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
                       <DropdownMenuItem
                         className=""
                         onClick={async () => {
-                          await disableWebsiteMonitoringTask({
+                          const toastId = toast.loading("Disabling task");
+                          const res = await disableWebsiteMonitoringTask({
                             id: task.id,
                           });
+                          if (res.status === "ok") {
+                            toast.success("Task disabled", { id: toastId });
+                          } else {
+                            toast.error("Failed to disable task", {
+                              id: toastId,
+                            });
+                          }
                         }}
                       >
                         Disable
@@ -82,9 +107,17 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
                     )}
                     <DropdownMenuItem
                       className="text-red-500"
-                      onClick={() =>
-                        deleteWebsiteMonitoringTask({ id: task.id })
-                      }
+                      onClick={async () => {
+                        const toastId = toast.loading("Deleting task");
+                        const res = await deleteWebsiteMonitoringTask({
+                          id: task.id,
+                        });
+                        if (res.status === "ok") {
+                          toast.success("Task deleted", { id: toastId });
+                        } else {
+                          toast.error("Failed to delete task", { id: toastId });
+                        }
+                      }}
                     >
                       Delete
                     </DropdownMenuItem>

@@ -80,10 +80,8 @@ const page = async ({ params }: { params: { id: string } }) => {
       <p className="text-sm text-muted-foreground">
         Indepth report of webite `{task.url}` uptime monitoring
       </p>
-      <div className=" ">
-        <div className="mt-12  overflow-auto">
-          <ChartView executions={results} />
-        </div>
+      <div className="mt-12 ">
+        <ChartView executions={results} />
       </div>
 
       <div className="mt-12">

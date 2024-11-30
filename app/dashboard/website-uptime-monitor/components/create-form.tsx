@@ -1,34 +1,72 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { FormItem } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import React, { useState } from "react";
+import React from "react";
 import { createWebsiteMonitoringTask } from "../_actions";
+import { z } from "zod";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+const formSchema = z.object({
+  url: z.string().min(2).max(100).url(),
+});
 const CreateForm = () => {
-  const [url, seturl] = useState("");
-  const handleSubmit = async () => {
-    await createWebsiteMonitoringTask({
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const toastId = toast.loading("Creating monitoring task");
+    const res = await createWebsiteMonitoringTask({
       data: {
-        url,
+        url: values.url,
       },
     });
-  };
+    if (res.status === "ok") {
+      toast.success("Monitoring task created", { id: toastId });
+      form.reset();
+    } else {
+      toast.error("Failed to create monitoring task", { id: toastId });
+    }
+  }
+
   return (
     <div>
-      {" "}
-      <div className="grid gap-6">
-        <FormItem>
-          <Label className="text-muted-foreground font-medium">
-            Add your service URL
-          </Label>
-          <Input onChange={(e) => seturl(e.target.value)} name="url" />
-        </FormItem>
-        <div>
-          <Button onClick={handleSubmit}>Submit</Button>
-        </div>
-      </div>
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
+          <FormField
+            control={form.control}
+            name="url"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Add the url of service</FormLabel>
+                <FormControl>
+                  <Input placeholder="url to service" {...field} />
+                </FormControl>
+                <FormDescription>
+                  Make sure to add the proper url of the service. Make sure it
+                  starts with https:// or http://
+                </FormDescription>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <Button disabled={form.formState.isSubmitting} type="submit">
+            Start Monitoring
+          </Button>
+        </form>
+      </Form>
     </div>
   );
 };
