@@ -16,7 +16,6 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { createDomainExpiryMonitoringTask } from "../_action";
 
 const formSchema = z.object({
   url: z.string().min(2).max(100),
@@ -28,12 +27,13 @@ const CreateForm = () => {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const toastId = toast.loading("Creating monitoring task");
-    const res = await createDomainExpiryMonitoringTask(values.url);
+    const res = {
+      status: "ok",
+    };
     if (res.status === "ok") {
       toast.success("Domain Monitoring task created", { id: toastId });
       form.reset();
     } else {
-      console.log(res);
       toast.error("Failed to create domain monitoring task", { id: toastId });
     }
   }

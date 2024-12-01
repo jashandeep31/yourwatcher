@@ -9,7 +9,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import React, { useEffect, useState } from "react";
-import type { SSLMonitoringTask } from "@prisma/client";
+import type { DomainMonitoringTask } from "@prisma/client";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -20,10 +20,10 @@ import { EllipsisVertical } from "lucide-react";
 
 import Link from "next/link";
 import { deleteFlow, toogleFlowStatus } from "@/actions";
-import { getDays } from "../_actions";
 import { toast } from "sonner";
+import { getDomainInfo } from "../_action";
 
-const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
+const TableView = ({ tasks }: { tasks: DomainMonitoringTask[] }) => {
   return (
     <div>
       <p className="mb-4 text-orange-500">
@@ -34,7 +34,7 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">S.No</TableHead>
-            <TableHead>Website</TableHead>
+            <TableHead>Domain </TableHead>
             <TableHead className="min-w-[100px]">Status</TableHead>
             <TableHead className="min-w-[100px]">Expires in</TableHead>
             <TableHead className="min-w-[100px]">Created On</TableHead>
@@ -47,11 +47,11 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
               <TableCell className="font-medium">{index + 1}</TableCell>
               <TableCell>
                 <Link href={`/dashboard/website-uptime-monitor/${task.id}`}>
-                  {task.url}
+                  {task.domain}
                 </Link>
               </TableCell>
               <TableCell>{task.status}</TableCell>
-              <Days id={task.id} />
+              <DomainInfoRenderer id={task.id} />
               <TableCell>
                 {new Date(task.createdAt).toLocaleDateString()}
               </TableCell>
@@ -70,10 +70,10 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
                           );
                           const res = await toogleFlowStatus({
                             id: task.id,
-                            namespace: "monitoring",
+                            namespace: "domain-monitoring",
                             status: "RUNNING",
                             path: "/dashboard/ssl-certificate-monitor",
-                            model: "sSLMonitoringTask",
+                            model: "domainMonitoringTask",
                           });
                           if (res.status === "ok") {
                             toast.success("SSL Monitoring task enabled", {
@@ -96,10 +96,10 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
                           const toastId = toast.loading("Disabling SSL task");
                           const res = await toogleFlowStatus({
                             id: task.id,
-                            namespace: "monitoring",
+                            namespace: "domain-monitoring",
                             status: "DISABLED",
                             path: "/dashboard/ssl-certificate-monitor",
-                            model: "sSLMonitoringTask",
+                            model: "domainMonitoringTask",
                           });
                           if (res.status === "ok") {
                             toast.success("SSL Monitoring task disabled", {
@@ -122,9 +122,9 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
                         const toastId = toast.loading("Deleting SSL task");
                         const res = await deleteFlow({
                           id: task.id,
-                          namespace: "monitoring",
+                          namespace: "domain-monitoring",
                           path: "/dashboard/ssl-certificate-monitor",
-                          model: "sSLMonitoringTask",
+                          model: "domainMonitoringTask",
                         });
                         if (res.status === "ok") {
                           toast.success("SSL Monitoring task deleted", {
@@ -150,21 +150,29 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
   );
 };
 
-const Days = ({ id }: { id: string }) => {
-  const [days, setDays] = useState("loading");
+const DomainInfoRenderer = ({ id }: { id: string }) => {
+  const [value, setvalue] = useState("loading..");
   useEffect(() => {
     (async () => {
-      const resDays = await getDays(id);
-      console.log(resDays);
-      if (!resDays) {
-        setDays("error");
-        return;
+      const res = await getDomainInfo(id);
+      console.log(res);
+      if (res.status === "ok") {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const data = res.data as any;
+        if (data.value.days_remaining && data.value.status === "active") {
+          setvalue(data.value.days_remaining);
+        } else if (data.value.status !== "active") {
+          setvalue("Domain not active");
+        } else {
+          setvalue("error");
+        }
+      } else {
+        setvalue("error");
       }
-      setDays(String(resDays) + " days");
     })();
   }, [id]);
 
-  return <TableCell>{days}</TableCell>;
+  return <TableCell>{value}</TableCell>;
 };
 
 export default TableView;

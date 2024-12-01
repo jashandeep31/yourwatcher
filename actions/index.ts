@@ -16,7 +16,7 @@ export const deleteFlow = async ({
   id: string;
   namespace: string;
   path?: string;
-  model: "websiteMonitoringTask" | "sSLMonitoringTask";
+  model: "websiteMonitoringTask" | "sSLMonitoringTask" | "domainMonitoringTask";
 }): Promise<Response> => {
   try {
     const session = await auth();
@@ -75,7 +75,7 @@ export const toogleFlowStatus = async ({
   namespace: string;
   status: "DISABLED" | "RUNNING";
   path?: string;
-  model: "websiteMonitoringTask" | "sSLMonitoringTask";
+  model: "websiteMonitoringTask" | "sSLMonitoringTask" | "domainMonitoringTask";
 }): Promise<Response> => {
   try {
     const session = await auth();

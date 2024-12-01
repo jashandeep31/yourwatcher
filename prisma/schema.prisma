@@ -28,6 +28,7 @@ model User {
   updatedAt             DateTime                @updatedAt
   WebsiteMonitoringTask WebsiteMonitoringTask[]
   SSLMonitoringTask     SSLMonitoringTask[]
+  DomainMonitoringTask  DomainMonitoringTask[]
 }
 
 model Account {
@@ -108,6 +109,20 @@ model SSLMonitoringTask {
   id String @id @default(uuid())
 
   url      String
+  kestraId String
+  status   FlowStatus @default(RUNNING)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model DomainMonitoringTask {
+  id String @id @default(uuid())
+
+  domain   String
   kestraId String
   status   FlowStatus @default(RUNNING)
 

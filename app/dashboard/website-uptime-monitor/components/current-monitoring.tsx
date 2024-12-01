@@ -24,6 +24,7 @@ import {
 } from "../_actions";
 import Link from "next/link";
 import { toast } from "sonner";
+import { buttonVariants } from "@/components/ui/button";
 
 const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
   return (
@@ -45,22 +46,21 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
           {tasks.map((task, index) => (
             <TableRow key={task.id}>
               <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>
-                <Link
-                  className="text-blue-500 underline"
-                  href={`/dashboard/website-uptime-monitor/${task.id}`}
-                >
-                  {task.url}{" "}
-                  <span className="font-bold text-sm text-foreground ">
-                    (In Depth View)
-                  </span>
-                </Link>
-              </TableCell>
+              <TableCell>{task.url} </TableCell>
               <TableCell>{task.status}</TableCell>
               <TableCell>
                 {new Date(task.createdAt).toLocaleDateString()}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className="text-right inline-flex gap-3 w-[150px] justify-end">
+                <Link
+                  className={buttonVariants({
+                    variant: "secondary",
+                    size: "sm",
+                  })}
+                  href={`/dashboard/website-uptime-monitor/${task.id}`}
+                >
+                  Indepth view
+                </Link>
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <EllipsisVertical size={16} />

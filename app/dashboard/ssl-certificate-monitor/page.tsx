@@ -17,6 +17,9 @@ const page = async () => {
     where: {
       userId: session.user.id,
     },
+    orderBy: {
+      createdAt: "desc",
+    },
   });
   return (
     <div className="m-4 ">
