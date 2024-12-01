@@ -1,3 +1,6 @@
+# Kestra flows
+## 3 Kestra flows are used in this project all can be found in the flow.ts file in the project
+
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
