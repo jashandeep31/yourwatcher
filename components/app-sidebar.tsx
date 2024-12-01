@@ -54,6 +54,10 @@ export function AppSidebar() {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
+              <div className="mt-12 border border-yellow-500 bg-yellow-50 p-3 text-sm text-yellow-500 rounded">
+                We are facing problem in sending Mail. Due to no http on are
+                servers. Will be fixed soon.
+              </div>
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
