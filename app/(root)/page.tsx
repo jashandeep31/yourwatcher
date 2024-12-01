@@ -11,7 +11,11 @@ const page = () => {
         <section className="bg-gray-50 py-20">
           <div className="container mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-4xl tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
+              <p className="border rounded-full p-2  text-sm inline-block  text-muted-foreground bg-blue-100">
+                Managed Kestra Flows
+              </p>
+
+              <h1 className="text-4xl mt-6 tracking-tight font-extrabold text-gray-900 sm:text-5xl md:text-6xl">
                 <span className="block">YourWatcher</span>
                 <span className="block text-blue-600">
                   Watch all your automated tasks and much more

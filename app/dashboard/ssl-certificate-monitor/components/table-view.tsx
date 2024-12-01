@@ -2,7 +2,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -22,6 +21,7 @@ import Link from "next/link";
 import { deleteFlow, toogleFlowStatus } from "@/actions";
 import { getDays } from "../_actions";
 import { toast } from "sonner";
+import ExecuteButton from "@/components/execute-button";
 
 const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
   return (
@@ -30,7 +30,6 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
         Tracking start after 00:00 of next day after adding new item.
       </p>
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">S.No</TableHead>
@@ -55,7 +54,16 @@ const TableView = ({ tasks }: { tasks: SSLMonitoringTask[] }) => {
               <TableCell>
                 {new Date(task.createdAt).toLocaleDateString()}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell
+                className="text-right flex imtece
+               justify-end"
+              >
+                <ExecuteButton
+                  id={task.id}
+                  path="/dashboard/ssl-certificate-monitor"
+                  namespace="monitoring"
+                  model="sSLMonitoringTask"
+                />
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <EllipsisVertical size={16} />

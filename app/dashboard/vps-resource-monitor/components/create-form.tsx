@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -18,7 +17,9 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const formSchema = z.object({
-  url: z.string().min(2).max(100),
+  username: z.string().min(2).max(100),
+  ip: z.string().min(2).max(100),
+  password: z.string().min(2).max(100),
 });
 const CreateForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -30,6 +31,7 @@ const CreateForm = () => {
     const res = {
       status: "ok",
     };
+    console.log(values);
     if (res.status === "ok") {
       toast.success("Domain Monitoring task created", { id: toastId });
       form.reset();
@@ -41,27 +43,54 @@ const CreateForm = () => {
   return (
     <div>
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 ">
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          className="grid md:grid-cols-3 gap-4"
+        >
           <FormField
             control={form.control}
-            name="url"
+            name="username"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Add the Domain of service</FormLabel>
+                <FormLabel>Enter username of VPS</FormLabel>
                 <FormControl>
                   <Input placeholder="jashan.dev" {...field} />
                 </FormControl>
-                <FormDescription>
-                  Make sure to add proper domain to start checking domain
-                  expiry.
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button disabled={form.formState.isSubmitting} type="submit">
-            Start Monitoring
-          </Button>
+          <FormField
+            control={form.control}
+            name="ip"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Enter IP of VPS</FormLabel>
+                <FormControl>
+                  <Input placeholder="jashan.dev" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Enter passsword of VPS</FormLabel>
+                <FormControl>
+                  <Input placeholder="jashan.dev" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <div>
+            <Button disabled={true} type="submit">
+              Coming sooon.
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

@@ -7,6 +7,71 @@ import { db } from "@/lib/db";
 import axios from "axios";
 import { revalidatePath } from "next/cache";
 
+export const executeFlow = async ({
+  id,
+  model,
+  path,
+  namespace,
+}: {
+  id: string;
+  namespace: string;
+  path?: string;
+  model: "websiteMonitoringTask" | "sSLMonitoringTask" | "domainMonitoringTask";
+}): Promise<Response> => {
+  try {
+    const session = await auth();
+    if (!session?.user || !session.user.id) {
+      return {
+        error: "Not authorized",
+        status: "err",
+      };
+    }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const task = await (db[model] as any).findUnique({
+      where: {
+        id,
+        userId: session.user.id,
+      },
+    });
+
+    if (!task) {
+      return {
+        error: "Not authorized",
+        status: "err",
+      };
+    }
+
+    const res = await axios.post(
+      KESTRA_URL + `/api/v1/executions/${namespace}/${task.kestraId}?wait=true`,
+      {},
+      {
+        headers: {
+          Authorization: `Basic akBqLmNvbTo1`,
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
+    if (res.status === 200) {
+      if (path) revalidatePath(path);
+      return {
+        status: "ok",
+        message: "okay",
+      };
+    } else {
+      return {
+        status: "err",
+        error: "Something went wrong",
+      };
+    }
+  } catch (e) {
+    console.log(e);
+    return {
+      error: "Something went wrong",
+      status: "err",
+    };
+  }
+};
 export const deleteFlow = async ({
   id,
   namespace,

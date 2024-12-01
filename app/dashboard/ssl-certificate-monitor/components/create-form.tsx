@@ -19,7 +19,7 @@ import { toast } from "sonner";
 import { createSSLMonitoringTask } from "../_actions";
 
 const formSchema = z.object({
-  url: z.string().min(2).max(100).url(),
+  url: z.string().min(2).max(100),
 });
 const CreateForm = () => {
   const form = useForm<z.infer<typeof formSchema>>({
@@ -46,13 +46,12 @@ const CreateForm = () => {
             name="url"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Add the url of service</FormLabel>
+                <FormLabel>Add the Domain of service</FormLabel>
                 <FormControl>
-                  <Input placeholder="url to service" {...field} />
+                  <Input placeholder="Domain to service" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Make sure to add the proper domain to the service to track
-                  SSL. Make sure it starts with https:// or http://
+                  Make sure to add the proper domain to the service to track SSL
                 </FormDescription>
                 <FormMessage />
               </FormItem>

@@ -45,7 +45,7 @@ export default function UptimeChart({
         <CardTitle>Website Uptime Chart</CardTitle>
       </CardHeader>
       <CardContent>
-        <ChartContainer config={chartConfig} className="h-[300px]">
+        <ChartContainer config={chartConfig} className="h-[200px]">
           <BarChart
             data={chartData}
             margin={{ top: 20, right: 30, left: 20, bottom: 60 }}
@@ -56,7 +56,7 @@ export default function UptimeChart({
               tickLine={false}
               tickMargin={10}
               axisLine={false}
-              angle={-45}
+              angle={-90}
               textAnchor="end"
               interval={0}
               tick={{ fontSize: 12 }}

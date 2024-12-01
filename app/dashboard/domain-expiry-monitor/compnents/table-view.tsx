@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { EllipsisVertical } from "lucide-react";
 
-import Link from "next/link";
 import { deleteFlow, toogleFlowStatus } from "@/actions";
 import { toast } from "sonner";
 import { getDomainInfo } from "../_action";
+import ExecuteButton from "@/components/execute-button";
 
 const TableView = ({ tasks }: { tasks: DomainMonitoringTask[] }) => {
   return (
@@ -45,17 +45,19 @@ const TableView = ({ tasks }: { tasks: DomainMonitoringTask[] }) => {
           {tasks.map((task, index) => (
             <TableRow key={task.id}>
               <TableCell className="font-medium">{index + 1}</TableCell>
-              <TableCell>
-                <Link href={`/dashboard/website-uptime-monitor/${task.id}`}>
-                  {task.domain}
-                </Link>
-              </TableCell>
+              <TableCell>{task.domain}</TableCell>
               <TableCell>{task.status}</TableCell>
               <DomainInfoRenderer id={task.id} />
               <TableCell>
                 {new Date(task.createdAt).toLocaleDateString()}
               </TableCell>
-              <TableCell className="text-right">
+              <TableCell className=" flex gap-4 items-center justify-end ">
+                <ExecuteButton
+                  id={task.id}
+                  path="/dashboard/ssl-certificate-monitor"
+                  namespace="domain-monitoring"
+                  model="domainMonitoringTask"
+                />
                 <DropdownMenu>
                   <DropdownMenuTrigger>
                     <EllipsisVertical size={16} />

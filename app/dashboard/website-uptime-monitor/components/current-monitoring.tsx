@@ -2,7 +2,6 @@
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -25,12 +24,12 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { buttonVariants } from "@/components/ui/button";
+import ExecuteButton from "@/components/execute-button";
 
 const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
   return (
     <div>
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
             <TableHead className="w-[100px]">S.No</TableHead>
@@ -52,6 +51,14 @@ const CurrnetMonitoring = ({ tasks }: { tasks: WebsiteMonitoringTask[] }) => {
                 {new Date(task.createdAt).toLocaleDateString()}
               </TableCell>
               <TableCell className="text-right inline-flex gap-3 w-[150px] justify-end">
+                <div>
+                  <ExecuteButton
+                    id={task.id}
+                    path="/dashboard/website-uptime-monitor"
+                    namespace="monitoring.websites"
+                    model="websiteMonitoringTask"
+                  />
+                </div>
                 <Link
                   className={buttonVariants({
                     variant: "secondary",

@@ -30,7 +30,7 @@ const items = [
     icon: Calendar,
   },
   {
-    title: "VPS Resource Monitor",
+    title: "VPS Resource Monitor (soon)",
     url: "/dashboard/vps-resource-monitor",
     icon: Search,
   },
