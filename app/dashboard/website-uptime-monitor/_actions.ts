@@ -1,7 +1,7 @@
 "use server";
 import axios from "axios";
 import { auth } from "@/lib/auth";
-import { KESTRA_URL } from "@/lib/conts";
+import { KESTRA_AUTHORIZATION, KESTRA_URL } from "@/lib/conts";
 import { v4 as uuid } from "uuid";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
@@ -41,7 +41,7 @@ export const deleteWebsiteMonitoringTask = async ({
         method: "delete",
         url: `${KESTRA_URL}/api/v1/flows/delete/by-ids`,
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
           "Content-Type": "application/json",
         },
         data: [
@@ -92,7 +92,7 @@ export const disableWebsiteMonitoringTask = async ({
         method: "post",
         url: `${KESTRA_URL}/api/v1/flows/disable/by-ids`,
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
           "Content-Type": "application/json",
         },
         data: [
@@ -143,7 +143,7 @@ export const enableWebsiteMonitoringTask = async ({
         method: "post",
         url: `${KESTRA_URL}/api/v1/flows/enable/by-ids`,
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
           "Content-Type": "application/json",
         },
         data: [
@@ -173,51 +173,59 @@ export const createWebsiteMonitoringTask = async ({
 }: {
   data: unknown;
 }): Promise<Response> => {
-  const session = await auth();
-  if (!session?.user || !session.user.id) {
-    return {
-      error: "Not authorized",
-      status: "err",
-    };
-  }
-
-  const monitoringData = data as MonitoringData;
-  const url = monitoringData.url;
-  if (!url) {
-    return {
-      error: "Not implemented",
-      status: "err",
-    };
-  }
-  const uniqueId = `check-website` + uuid();
-  const res = await axios.post(
-    KESTRA_URL + "/api/v1/flows",
-    websiteMonitoringTaskFlow({ uniqueId, url }),
-    {
-      headers: {
-        "Content-Type": "application/x-yaml",
-        Authorization: `Basic akBqLmNvbTo1`,
-      },
+  try {
+    const session = await auth();
+    if (!session?.user || !session.user.id || !session.user.email) {
+      return {
+        error: "Not authorized",
+        status: "err",
+      };
     }
-  );
-  if (res.status !== 200) {
+
+    const monitoringData = data as MonitoringData;
+    const url = monitoringData.url;
+    if (!url) {
+      return {
+        error: "Not implemented",
+        status: "err",
+      };
+    }
+    const uniqueId = `check-website` + uuid();
+    const res = await axios.post(
+      KESTRA_URL + "/api/v1/flows",
+      websiteMonitoringTaskFlow({ uniqueId, url, email: session.user.email }),
+      {
+        headers: {
+          "Content-Type": "application/x-yaml",
+          Authorization: KESTRA_AUTHORIZATION,
+        },
+      }
+    );
+    if (res.status !== 200) {
+      return {
+        error: "Not implemented",
+        status: "err",
+      };
+    }
+
+    await db.websiteMonitoringTask.create({
+      data: {
+        userId: session.user.id,
+        url: url,
+        kestraId: uniqueId,
+      },
+    });
+    revalidatePath("/dashboard/website-uptime-monitor");
+
     return {
-      error: "Not implemented",
+      status: "ok",
+      message: "okay",
+    };
+  } catch (e) {
+    console.log(e);
+    return {
+      error: "Something went wrong, please try again",
       status: "err",
     };
   }
-
-  await db.websiteMonitoringTask.create({
-    data: {
-      userId: session.user.id,
-      url: url,
-      kestraId: uniqueId,
-    },
-  });
-  revalidatePath("/dashboard/website-uptime-monitor");
-
-  return {
-    status: "ok",
-    message: "okay",
-  };
 };

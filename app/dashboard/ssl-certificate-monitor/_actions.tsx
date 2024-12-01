@@ -3,7 +3,7 @@
 import { auth } from "@/lib/auth";
 import { Response } from "../website-uptime-monitor/_actions";
 import axios from "axios";
-import { KESTRA_URL } from "@/lib/conts";
+import { KESTRA_AUTHORIZATION, KESTRA_URL } from "@/lib/conts";
 import { db } from "@/lib/db";
 import { v4 as uuid } from "uuid";
 import { revalidatePath } from "next/cache";
@@ -26,7 +26,7 @@ export const getDays = async (id: string): Promise<null | number> => {
       KESTRA_URL + `/api/v1/namespaces/monitoring/kv/${task?.kestraId}-status`,
       {
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
         },
       }
     );
@@ -43,7 +43,7 @@ export const createSSLMonitoringTask = async (
   url: string
 ): Promise<Response> => {
   const session = await auth();
-  if (!session?.user || !session.user.id) {
+  if (!session?.user || !session.user.id || !session.user.email) {
     return {
       error: "Not authorized",
       status: "err",
@@ -60,11 +60,11 @@ export const createSSLMonitoringTask = async (
 
   const res = await axios.post(
     KESTRA_URL + "/api/v1/flows",
-    sslMonitoringTaskFlow({ uniqueId, url }),
+    sslMonitoringTaskFlow({ uniqueId, url, email: session.user.email }),
     {
       headers: {
         "Content-Type": "application/x-yaml",
-        Authorization: `Basic akBqLmNvbTo1`,
+        Authorization: KESTRA_AUTHORIZATION,
       },
     }
   );

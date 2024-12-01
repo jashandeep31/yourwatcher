@@ -2,7 +2,7 @@
 
 import { Response } from "@/app/dashboard/website-uptime-monitor/_actions";
 import { auth } from "@/lib/auth";
-import { KESTRA_URL } from "@/lib/conts";
+import { KESTRA_AUTHORIZATION, KESTRA_URL } from "@/lib/conts";
 import { db } from "@/lib/db";
 import axios from "axios";
 import { revalidatePath } from "next/cache";
@@ -46,7 +46,7 @@ export const executeFlow = async ({
       {},
       {
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
           "Content-Type": "multipart/form-data",
         },
       }
@@ -103,7 +103,7 @@ export const deleteFlow = async ({
         method: "delete",
         url: `${KESTRA_URL}/api/v1/flows/delete/by-ids`,
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
           "Content-Type": "application/json",
         },
         data: [
@@ -173,7 +173,7 @@ export const toogleFlowStatus = async ({
         ],
         {
           headers: {
-            Authorization: `Basic akBqLmNvbTo1`,
+            Authorization: KESTRA_AUTHORIZATION,
             "Content-Type": "application/json",
           },
         }

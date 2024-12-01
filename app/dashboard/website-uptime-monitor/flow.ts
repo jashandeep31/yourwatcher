@@ -1,9 +1,11 @@
 export const websiteMonitoringTaskFlow = ({
   uniqueId,
   url,
+  email,
 }: {
   uniqueId: string;
   url: string;
+  email: string;
 }): string => {
   return `id: ${uniqueId}
 namespace: monitoring.websites
@@ -19,6 +21,7 @@ tasks:
     type: io.kestra.plugin.core.http.Request
     uri: "${url}"
     method: "GET"
+    # failOnStatusCode: true
 
   - id: set_status
     type: io.kestra.plugin.core.execution.Labels
@@ -29,26 +32,33 @@ tasks:
 
   - id: check_status
     type: io.kestra.plugin.core.flow.If
-    condition: "{{ outputs.request.code == '200' }}"
+    condition: "{{ outputs.request.code == 200 }}"
     then:
       - id: when_true
         type: io.kestra.plugin.core.log.Log
         message: "Condition was true"
      
     else:
-      - id: when_false
-        type: io.kestra.plugin.core.log.Log
-        message: "Condition was false"
+      - id: send_mail_on_false
+        type: io.kestra.plugin.notifications.mail.MailExecution
+        to: ${email}
+        from: noreply@jashandeep.me
+        subject: "${url} is down please review it "
+        host: mail.privateemail.com
+        port: 465
+        username: "noreply@jashandeep.me"
+        password: "{{ secret('SECRET_EMAIL_PASSWORD')}}"
 
 
 errors:
-  - id: test
-    type: io.kestra.plugin.core.log.Log
-    message: "Oh vwe failed"
-  - id: set_status_after_failing
-    type: io.kestra.plugin.core.execution.Labels
-    labels:
-      status: "down"
-      check_time: "{{ now() }}"
+  - id: send_mail_on_fail
+    type: io.kestra.plugin.notifications.mail.MailExecution
+    to: ${email}
+    from: noreply@jashandeep.me
+    subject: "The workflow execution failed for the flow in the namespace of ${url}"
+    host: mail.privateemail.com
+    port: 465
+    username: "noreply@jashandeep.me"
+    password: "{{ secret('SECRET_EMAIL_PASSWORD')}}"
 `;
 };

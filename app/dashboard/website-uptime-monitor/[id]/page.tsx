@@ -1,5 +1,5 @@
 import { auth } from "@/lib/auth";
-import { KESTRA_URL } from "@/lib/conts";
+import { KESTRA_AUTHORIZATION, KESTRA_URL } from "@/lib/conts";
 import { db } from "@/lib/db";
 import axios from "axios";
 import { redirect } from "next/navigation";
@@ -45,7 +45,7 @@ const getExecutions = async (taskId: string) => {
     const res = await axios.get(
       KESTRA_URL +
         `/api/v1/executions/search?namespace=monitoring.websites&flowId=${taskId}&startDate=${startDate}&endDate=${endDate}`,
-      { headers: { Authorization: `Basic akBqLmNvbTo1` } }
+      { headers: { Authorization: KESTRA_AUTHORIZATION } }
     );
     return res.data;
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

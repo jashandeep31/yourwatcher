@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { Response } from "../website-uptime-monitor/_actions";
 import { v4 as uuid } from "uuid";
 import axios from "axios";
-import { KESTRA_URL } from "@/lib/conts";
+import { KESTRA_AUTHORIZATION, KESTRA_URL } from "@/lib/conts";
 import { domainExpiryMonitorFlow } from "./flow";
 import { db } from "@/lib/db";
 import { revalidatePath } from "next/cache";
@@ -47,7 +47,7 @@ export const getDomainInfo = async (
         `/api/v1/namespaces/domain-monitoring/kv/${task?.kestraId}-status`,
       {
         headers: {
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
         },
       }
     );
@@ -68,7 +68,7 @@ export const createDomainExpiryMonitoringTask = async (
 ): Promise<Response> => {
   try {
     const session = await auth();
-    if (!session?.user || !session.user.id) {
+    if (!session?.user || !session.user.id || !session.user.email) {
       return {
         error: "Not authorized",
         status: "err",
@@ -83,11 +83,15 @@ export const createDomainExpiryMonitoringTask = async (
     }
     const res = await axios.post(
       KESTRA_URL + "/api/v1/flows",
-      domainExpiryMonitorFlow({ id: uniqueId, domain }),
+      domainExpiryMonitorFlow({
+        id: uniqueId,
+        domain,
+        email: session.user.email,
+      }),
       {
         headers: {
           "Content-Type": "application/x-yaml",
-          Authorization: `Basic akBqLmNvbTo1`,
+          Authorization: KESTRA_AUTHORIZATION,
         },
       }
     );
@@ -112,6 +116,7 @@ export const createDomainExpiryMonitoringTask = async (
       message: "okay",
     };
   } catch (e) {
+    console.log(e);
     return {
       error: "Something went wrong, please try again",
       status: "err",
