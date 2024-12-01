@@ -60,7 +60,12 @@ export const createSSLMonitoringTask = async (
 
   const res = await axios.post(
     KESTRA_URL + "/api/v1/flows",
-    sslMonitoringTaskFlow({ uniqueId, url, email: session.user.email }),
+    sslMonitoringTaskFlow({
+      uniqueId,
+      url,
+      email: session.user.email,
+      domain: url,
+    }),
     {
       headers: {
         "Content-Type": "application/x-yaml",

@@ -2,10 +2,12 @@ export const sslMonitoringTaskFlow = ({
   uniqueId,
   url,
   email,
+  domain,
 }: {
   uniqueId: string;
   url: string;
   email: string;
+  domain: string;
 }): string => {
   return `id: ${uniqueId}
 namespace: monitoring
@@ -31,7 +33,7 @@ tasks:
               days_remaining = (expiry_date - datetime.datetime.now()).days
               return expiry_date, days_remaining
               
-      expiry_date, days_remaining = check_ssl_expiry("wemakedevs.org")
+      expiry_date, days_remaining = check_ssl_expiry("${domain}")
       
       Kestra.outputs({
           'days': days_remaining,
